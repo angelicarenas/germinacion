@@ -1,16 +1,16 @@
 #####################################################################################
-###################LABORATORIO 6 GERMINACI覰 EN PLANTAS##############################
+###################LABORATORIO 6 GERMINACI脫N EN PLANTAS##############################
 #####################################################################################
-###OBJETIVO: MEDIR LA GERMINACI覰 EN SEMILLAS APLICANDO CONCEPTOS DE BD##############
+###OBJETIVO: MEDIR LA GERMINACI脫N EN SEMILLAS APLICANDO CONCEPTOS DE BD##############
 #####################################################################################
 ###PROCEDIMIENTO: 1. Cargar bibliotecas #############################################
-################# 2. An醠isis de datos sobre germinaci髇#############################
+################# 2. An谩lisis de datos sobre germinaci贸n#############################
 ################# 3. Figuras
 
 #####################################################################################
 ########################## 1. Cargar bibliotecas (load libraries)####################
 #####################################################################################
-### Opci髇 1
+### Opci贸n 1
 
 loadandinstall <- function(mypkg) {if (!is.element(mypkg, installed.packages()[,1])){install.packages(mypkg)}; library(mypkg, character.only=TRUE)  }
 loadandinstall ("GerminaR")
@@ -19,7 +19,7 @@ loadandinstall("knitr")
 loadandinstall("cowplot")
 loadandinstall("dplyr")
 
-#### Opci髇 2
+#### Opci贸n 2
 
 install.packages("GerminaR")
 install.packages("tidyverse")
@@ -35,7 +35,7 @@ library("dplyr")
 library("cowplot")
 library("ggplot")
 
-#### Opci髇 3
+#### Opci贸n 3
 
 if (!require("remotes"))
   install.packages("remotes")
@@ -43,7 +43,7 @@ remotes::install_github("Flavjack/GerminaR")
 1
 
 #####################################################################################
-###################### 2. An醠isis de datos de germinacion #########################
+###################### 2. An谩lisis de datos de germinacion #########################
 #####################################################################################
 
 # Get data (Obtener los datos desde mi computador)
@@ -54,13 +54,12 @@ dt<-read.table(file.choose(), sep=";", header=TRUE)
 
 head(dt)
 
-# load data ("Cargar" los datos para el an醠isis de germinaci髇)
+# load data ("Cargar" los datos para el an谩lisis de germinaci贸n)
 ##dplyr::mutate
 
 data <- dt %>% mutate(across(c(nacl, temp, rep, PL), as.factor))
-data <- dt %>% mutate(across(c(nacl, temp, rep, PL), as.factor))
 
-#Resumen de c醠culos
+#Resumen de c谩lculos
 smr <- ger_summary(SeedN = "seeds", evalName = "D", data = data)
 knitr::kable(head(smr, 10),align = "c")
 View(smr)
@@ -83,17 +82,17 @@ gsm
 
 # Tabla de los Datos de los experimentos de las semillas
 
-knitr::kable(x = dt,booktabs = TRUE, caption = "Experimento germinaci髇 semillas Zea mays BD2110PUJ")
+knitr::kable(x = dt,booktabs = TRUE, caption = "Experimento germinaci贸n semillas Zea mays BD2110PUJ")
 
 # Analisis de varianza
 
 av <- aov(formula = grp ~ nacl*temp + rep, data = gsm)
 av
 
-# Prueba de comparaci髇 de promedios 
+# Prueba de comparaci贸n de promedios 
 mc_grp <- ger_testcomp(aov = av,comp = c("temp","nacl"),type ="snk")
 
-# 2. N鷐ero total de semillas germinadas en cada tratamiento
+# 2. N煤mero total de semillas germinadas en cada tratamiento
 
 aov <- aov(grp ~ nacl*temp, data=smr)
 
@@ -104,7 +103,7 @@ mc <- ger_testcomp(aov = aov
 data <- mc$table
 data
 
-## Figura 1. Efecto de la luz en el n鷐ero de semillas germinadas
+## Figura 1. Efecto de la luz en el n煤mero de semillas germinadas
 
 fplot(data = data
       , type = "line"
@@ -113,14 +112,14 @@ fplot(data = data
       , groups = "nacl"
       , limits = NULL
       , brakes = 100
-      , ylab = "N鷐ero de semillas germinadas"
-      , xlab = "Condici髇 ('1=luz,' '2=oscuridad')"
+      , ylab = "N煤mero de semillas germinadas"
+      , xlab = "Condici贸n ('1=luz,' '2=oscuridad')"
       , glab = "Concentraciones de NaCl"
       , legend = "top"
       , color = T
 )
 
-### 2.2. Tiempo promedio de germinaci髇: Mean Germination Time (MGT)
+### 2.2. Tiempo promedio de germinaci贸n: Mean Germination Time (MGT)
 ### Description: This function calculates the mean germination time of germination according at the time lapse of the evaluations.
 ### Details: It was proposed by Haberlandt in 1875. It is calculated as the weighted average germination time. The number of germinated seeds at the intervals established for the collection of data is used as weight. It is expressed in terms of the same units of time used in the germination count (CZABATOR, 1962).
 ### Value: It returns an vector with the values of Mean Germination Time.
@@ -129,16 +128,16 @@ fplot(data = data
 mgt <- ger_MGT(evalName = "D", data = dt)
 mgt
 
-# An醠isis de varianza
+# An谩lisis de varianza
 av <- aov(formula = mgt ~ nacl*temp + rep, data = gsm)
 av
 
-# Prueba de comparaci髇 de medias 
+# Prueba de comparaci贸n de medias 
 mc_mgt <- ger_testcomp(aov = av
                        , comp = c("temp", "nacl"), type = "snk")
 mc_mgt
 
-# Figura 2. Tiempo promedio de germinaci髇 en los tratamientos
+# Figura 2. Tiempo promedio de germinaci贸n en los tratamientos
 
 data <- mc_mgt$table
 data
@@ -150,8 +149,8 @@ fplot(data = data
       , groups = "nacl"
       , limits = NULL
       , brakes = 1
-      , ylab = "Tiempo promedio germinaci髇 (d韆s)"
-      , xlab = "Condici髇 ('1=luz,' '2=oscuridad')"
+      , ylab = "Tiempo promedio germinaci贸n (d铆as)"
+      , xlab = "Condici贸n ('1=luz,' '2=oscuridad')"
       , glab = "Concentraciones de NaCl"
       , legend = "top"
       , color = T
@@ -163,7 +162,7 @@ fplot(data = data
 git <- ger_intime(Factor = "nacl", SeedN = "seeds", evalName = "D", method = "percentage", data = dt)
 git
 
-# Figura 3. Germinaci髇 en los diferentes tratamientos seg鷑 el d韆
+# Figura 3. Germinaci贸n en los diferentes tratamientos seg煤n el d铆a
  
 fplot(data = git
       , type = "line"
@@ -173,19 +172,19 @@ fplot(data = git
       , limits = c(0,400)
       , brakes = 100
       , ylab = "Semillas germinadas"
-      , xlab = "D韆"
+      , xlab = "D铆a"
       , glab = "Concentraciones de NaCl"
       , legend = "top"
       , color = TRUE
 )
 
-### 2.4. EFECTO DE LA CONDICI覰 (LUZ Y OSCURIDAD)
+### 2.4. EFECTO DE LA CONDICI脫N (LUZ Y OSCURIDAD)
 
 # data frame with percentual or relative germination in time by condition
 git2 <- ger_intime(Factor = "temp", SeedN = "seeds", evalName = "D", method = "percentage", data = dt)
 git2
 
-# Figura 4. Efecto en la germinaci髇 en el tiempo seg鷑 la condici髇 luz/oscuridad
+# Figura 4. Efecto en la germinaci贸n en el tiempo seg煤n la condici贸n luz/oscuridad
 fplot(data = git2
       , type = "line"
       , x = "evaluation"
@@ -193,14 +192,14 @@ fplot(data = git2
       , groups = "temp"
       , limits = c(0,300)
       , brakes = 50
-      , xlab = "D韆"
+      , xlab = "D铆a"
       , ylab = "Semillas germinadas"
-      , glab = "Condici髇 ('1=Luz,' '2=Oscuridad')"
+      , glab = "Condici贸n ('1=Luz,' '2=Oscuridad')"
       , legend = "top"
       , color = TRUE
 )
 
-### 2.5. EFECTO DE LA CONDICI覰 (LUZ Y OSCURIDAD) EN LA LONGITUD DE LAS RA虲ES
+### 2.5. EFECTO DE LA CONDICI脫N (LUZ Y OSCURIDAD) EN LA LONGITUD DE LAS RA脥CES
 pl1 <- ger_GRP(SeedN ="PL", evalName="D", data=dt)
 pl1
 
@@ -216,7 +215,7 @@ av
 data <- mc_pl$table
 data
 
-## Figura 1. Efecto de la luz en el n鷐ero de semillas germinadas
+## Figura 1. Efecto de la luz en el n煤mero de semillas germinadas
 
 fplot(data = data
       , type = "line"
@@ -225,14 +224,14 @@ fplot(data = data
       , groups = "nacl"
       , limits = NULL
       , brakes = 100
-      , ylab = "N鷐ero de semillas germinadas"
-      , xlab = "Condici髇 ('1=luz,' '2=oscuridad')"
+      , ylab = "N煤mero de semillas germinadas"
+      , xlab = "Condici贸n ('1=luz,' '2=oscuridad')"
       , glab = "Concentraciones de NaCl"
       , legend = "top"
       , color = T
 )
 
-### OPCIONAL: Puedo obtener los promedios de cada d韆 con:
+### OPCIONAL: Puedo obtener los promedios de cada d铆a con:
 
 promedios<-summary.data.frame(dt)
 View(promedios)
