@@ -54,7 +54,7 @@ head(dt)
 # load data ("Cargar" los datos para el análisis de germinación)
 ##dplyr::mutate
 
-data <- dt %>% mutate(across(c(nacl, cond, rep, PL), as.factor))
+data <- dt %>% mutate(across(c(nacl, cond, rep, PL, BM), as.factor))
 
 #Resumen de cálculos
 smr <- ger_summary(SeedN = "seeds", evalName = "D", data = data)
@@ -71,15 +71,15 @@ View(smr)
 ###Details: According GOUVEA LABOURIAU (1983), the germinability of a sample of is the percentage of seeds in which the seed germination process comes to an end, in experimental conditions by the seminal intrauterine growth resulting protrusion (or emergence) of a living embryo.
 ###Value: It returns an vector with the percentage of seed germinated.
 
-grp <- ger_GRP(SeedN ="seeds", evalName="D", data=dt)
+grp <- ger_GRP(SeedN ="seeds", evalName="D", data=data)
 grp
 
-gsm <- ger_summary(SeedN = "seeds", evalName = "D",data=dt)
+gsm <- ger_summary(SeedN = "seeds", evalName = "D",data=data)
 gsm
 
 # Tabla de los Datos de los experimentos de las semillas
 
-knitr::kable(x = dt,booktabs = TRUE, caption = "Experimento germinación semillas Zea mays BD2130PUJ")
+knitr::kable(x = data,booktabs = TRUE, caption = "Experimento germinación semillas Zea mays BD2130PUJ")
 
 # Analisis de varianza
 
@@ -87,7 +87,8 @@ av <- aov(formula = grp ~ nacl*cond + rep, data = gsm)
 av
 
 # Prueba de comparación de promedios 
-mc_grp <- ger_testcomp(aov = av,comp = c("cond","nacl"),type ="snk")
+mc_grp <- ger_testcomp(aov = av,comp = c("cond","nacl"),type ="snk", sig = 0.05)
+mc_grp
 
 # 2. Número total de semillas germinadas en cada tratamiento
 
@@ -95,13 +96,13 @@ aov <- aov(grp ~ nacl*cond, data=smr)
 
 mc <- ger_testcomp(aov = aov, comp = c("nacl", "cond"))
 
-data <- mc$table
-data
+datagrp <- mc$table
+datagrp
 
 ## Figura 1. Efecto de la luz en el número de semillas germinadas
 
 fplot(
-  data, 
+  data=datagrp, 
   type = "bar",
   x = "cond", 
   y = "nacl", 
@@ -127,7 +128,7 @@ fplot(
 ### Value: It returns an vector with the values of Mean Germination Time.
 ### References: CZABATOR, F. J. Germination value: an index combining speed and completeness of pine seed germination. Forest Science, v. 8, n. 4, p. 386-396, 1962.
 
-mgt <- ger_MGT(evalName = "D", data = dt)
+mgt <- ger_MGT(evalName = "D", data = data)
 mgt
 
 # Análisis de varianza
@@ -135,16 +136,16 @@ av <- aov(formula = mgt ~ nacl*cond + rep, data = gsm)
 av
 
 # Prueba de comparación de medias 
-mc_mgt <- ger_testcomp(aov = av, comp = c("cond", "nacl"), type = "snk")
+mc_mgt <- ger_testcomp(aov = av, comp = c("cond", "nacl"), type = "snk", sig = 0.05)
 mc_mgt
 
 # Figura 2. Tiempo promedio de germinación en los tratamientos
 
-data <- mc_mgt$table
-data
+datamgt <- mc_mgt$table
+datamgt
 
 fplot(
-  data
+  data=datamgt
   , type = "bar"
   , x = "cond"
   , y = "mgt"
@@ -168,7 +169,7 @@ fplot(
 
 # data frame with percentual or relative germination in time by NaCl
 
-grt <- ger_intime(Factor = "nacl", SeedN = "seeds", evalName = "D", method = "percentage", data = dt)
+grt <- ger_intime(Factor = "nacl", SeedN = "seeds", evalName = "D", method = "percentage", data = data)
 head(grt, 10)
 
 # Figura 3. Germinación en los diferentes tratamientos según el día
@@ -195,7 +196,7 @@ fplot(data = grt
 ### 2.4. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD)
 
 # data frame with percentual or relative germination in time by condition
-git <- ger_intime(Factor = "cond", SeedN = "seeds", evalName = "D", method = "percentage", data = dt)
+git <- ger_intime(Factor = "cond", SeedN = "seeds", evalName = "D", method = "percentage", data = data)
 git
 
 # Figura 4. Efecto en la germinación en el tiempo según la condición luz/oscuridad
@@ -221,15 +222,14 @@ fplot(data = git
 )
 ### 2.5. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD) EN LA LONGITUD DE LAS RAÍCES
 
-dt
 fplot(
-  data=dt, 
+  data=data, 
   type = "bar",
   x = "cond", 
   y = "PL", 
   group = "nacl",
-  ylab = "Promedio de la longitud de raíz (cm)", 
-  xlab = "Condición ('1=luz,' '2=oscuridad')", 
+  ylab = "Promedio de cada caja de la longitud de raíz (cm)", 
+  xlab = "Luz                              Oscuridad", 
   glab = "Concentraciones de NaCl", 
   ylimits = NULL,
   xrotation = NULL,
@@ -242,6 +242,71 @@ fplot(
   color = TRUE,
   opt = NULL
 )
+
+fplot(
+  data=data, 
+  type = "bar",
+  x = "cond", 
+  y = "PL_P", 
+  group = "nacl",
+  ylab = "Promedio de la longitud de raíz (cm)", 
+  xlab = "Luz                              Oscuridad", 
+  glab = "Concentraciones de NaCl", 
+  ylimits = NULL,
+  xrotation = NULL,
+  xtext = "cond",
+  gtext = NULL,
+  legend = "bottom",
+  sig = NULL,
+  sigsize = 4,
+  error = NULL,
+  color = TRUE,
+  opt = NULL
+)
+### 2.6. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD) EN LA BIOMASA
+
+fplot(
+  data=data, 
+  type = "bar",
+  x = "cond", 
+  y = "BM", 
+  group = "nacl",
+  ylab = "Promedio de cada caja de la biomasa germinada (g)", 
+  xlab = "Luz                              Oscuridad", 
+  glab = "Concentraciones de NaCl", 
+  ylimits = NULL,
+  xrotation = NULL,
+  xtext = "cond",
+  gtext = NULL,
+  legend = "bottom",
+  sig = NULL,
+  sigsize = 3,
+  error = NULL,
+  color = TRUE,
+  opt = NULL
+)
+
+fplot(
+  data=data, 
+  type = "bar",
+  x = "cond", 
+  y = "BM_P", 
+  group = "nacl",
+  ylab = "Promedio de la biomasa germinada (g)", 
+  xlab = "Luz                              Oscuridad", 
+  glab = "Concentraciones de NaCl", 
+  ylimits = NULL,
+  xrotation = NULL,
+  xtext = "cond",
+  gtext = NULL,
+  legend = "bottom",
+  sig = NULL,
+  sigsize = 4,
+  error = NULL,
+  color = TRUE,
+  opt = NULL
+)
+
 ########################### OTROS CALCULOS ###############################
 ### OPCIONAL: Puedo obtener los promedios de cada día con:
 
