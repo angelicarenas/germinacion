@@ -1,5 +1,5 @@
 #####################################################################################
-###################LABORATORIO 6 GERMINACIÓN EN PLANTAS##############################
+###################LABORATORIO GERMINACIÓN EN PLANTAS##############################
 #####################################################################################
 ###OBJETIVO: MEDIR LA GERMINACIÓN EN SEMILLAS APLICANDO CONCEPTOS DE BD##############
 #####################################################################################
@@ -17,23 +17,20 @@ loadandinstall ("GerminaR")
 loadandinstall("tidyverse")
 loadandinstall("knitr")
 loadandinstall("cowplot")
-loadandinstall("dplyr")
 
 #### Opción 2
 
 install.packages("GerminaR")
 install.packages("tidyverse")
 install.packages("knitr")
-install.packages("dplyr")
 install.packages("cowplot")
-install.packages("ggplot")
+install.packages("ggplot2")
 
 library("GerminaR")
 library("tidyverse")
 library("knitr")
-library("dplyr")
 library("cowplot")
-library("ggplot")
+library("ggplot2")
 
 #### Opción 3
 
@@ -57,11 +54,11 @@ head(dt)
 # load data ("Cargar" los datos para el análisis de germinación)
 ##dplyr::mutate
 
-data <- dt %>% mutate(across(c(nacl, temp, rep, PL), as.factor))
+data <- dt %>% mutate(across(c(nacl, cond, rep, PL), as.factor))
 
 #Resumen de cálculos
 smr <- ger_summary(SeedN = "seeds", evalName = "D", data = data)
-knitr::kable(head(smr, 10),align = "c")
+knitr::kable(head(smr, 12),align = "c")
 View(smr)
 
 ### 2.1. Germination Seed Percentage (GRP)###########################################
@@ -82,41 +79,46 @@ gsm
 
 # Tabla de los Datos de los experimentos de las semillas
 
-knitr::kable(x = dt,booktabs = TRUE, caption = "Experimento germinación semillas Zea mays BD2110PUJ")
+knitr::kable(x = dt,booktabs = TRUE, caption = "Experimento germinación semillas Zea mays BD2130PUJ")
 
 # Analisis de varianza
 
-av <- aov(formula = grp ~ nacl*temp + rep, data = gsm)
+av <- aov(formula = grp ~ nacl*cond + rep, data = gsm)
 av
 
 # Prueba de comparación de promedios 
-mc_grp <- ger_testcomp(aov = av,comp = c("temp","nacl"),type ="snk")
+mc_grp <- ger_testcomp(aov = av,comp = c("cond","nacl"),type ="snk")
 
 # 2. Número total de semillas germinadas en cada tratamiento
 
-aov <- aov(grp ~ nacl*temp, data=smr)
+aov <- aov(grp ~ nacl*cond, data=smr)
 
-mc <- ger_testcomp(aov = aov
-                   , comp = c("nacl", "temp")
-)
+mc <- ger_testcomp(aov = aov, comp = c("nacl", "cond"))
 
 data <- mc$table
 data
 
 ## Figura 1. Efecto de la luz en el número de semillas germinadas
 
-fplot(data = data
-      , type = "line"
-      , x = "temp"
-      , y = "grp"
-      , groups = "nacl"
-      , limits = NULL
-      , brakes = 100
-      , ylab = "Número de semillas germinadas"
-      , xlab = "Condición ('1=luz,' '2=oscuridad')"
-      , glab = "Concentraciones de NaCl"
-      , legend = "top"
-      , color = T
+fplot(
+  data, 
+  type = "bar",
+  x = "cond", 
+  y = "nacl", 
+  group = "nacl",
+  ylab = "Número de semillas germinadas", 
+  xlab = "Condición ('1=luz,' '2=oscuridad')", 
+  glab = "Concentraciones de NaCl", 
+  ylimits = NULL,
+  xrotation = NULL,
+  xtext = NULL,
+  gtext = NULL,
+  legend = "top",
+  sig = NULL,
+  sigsize = 3,
+  error = NULL,
+  color = TRUE,
+  opt = NULL
 )
 
 ### 2.2. Tiempo promedio de germinación: Mean Germination Time (MGT)
@@ -129,12 +131,11 @@ mgt <- ger_MGT(evalName = "D", data = dt)
 mgt
 
 # Análisis de varianza
-av <- aov(formula = mgt ~ nacl*temp + rep, data = gsm)
+av <- aov(formula = mgt ~ nacl*cond + rep, data = gsm)
 av
 
 # Prueba de comparación de medias 
-mc_mgt <- ger_testcomp(aov = av
-                       , comp = c("temp", "nacl"), type = "snk")
+mc_mgt <- ger_testcomp(aov = av, comp = c("cond", "nacl"), type = "snk")
 mc_mgt
 
 # Figura 2. Tiempo promedio de germinación en los tratamientos
@@ -142,95 +143,106 @@ mc_mgt
 data <- mc_mgt$table
 data
 
-fplot(data = data
-      , type = "bar"
-      , x = "temp"
-      , y = "mgt"
-      , groups = "nacl"
-      , limits = NULL
-      , brakes = 1
-      , ylab = "Tiempo promedio germinación (días)"
-      , xlab = "Condición ('1=luz,' '2=oscuridad')"
-      , glab = "Concentraciones de NaCl"
-      , legend = "top"
-      , color = T
+fplot(
+  data
+  , type = "bar"
+  , x = "cond"
+  , y = "mgt"
+  , group = "nacl"
+  , ylab = "Tiempo promedio germinación (días)" 
+  , xlab = "Condición ('1=luz,' '2=oscuridad')"
+  , glab = "Concentraciones de NaCl"
+  , ylimits = NULL
+  , xrotation = NULL
+  , xtext = NULL
+  , gtext = NULL
+  , legend = "top"
+  , sig = NULL
+  , sigsize = 5
+  , error = NULL
+  , color = TRUE
+  , opt = NULL
 )
 
 ### 2.3. EFECTO DEL NaCl
 
 # data frame with percentual or relative germination in time by NaCl
-git <- ger_intime(Factor = "nacl", SeedN = "seeds", evalName = "D", method = "percentage", data = dt)
-git
+
+grt <- ger_intime(Factor = "nacl", SeedN = "seeds", evalName = "D", method = "percentage", data = dt)
+head(grt, 10)
 
 # Figura 3. Germinación en los diferentes tratamientos según el día
- 
-fplot(data = git
+fplot(data = grt
       , type = "line"
       , x = "evaluation"
       , y = "mean"
-      , groups = "nacl"
-      , limits = c(0,400)
-      , brakes = 100
-      , ylab = "Semillas germinadas"
-      , xlab = "Día"
+      , group = "nacl"
+      , ylab = "Semillas germinadas" 
+      , xlab = "Días"
       , glab = "Concentraciones de NaCl"
+      , ylimits = NULL
+      , xrotation = NULL
+      , xtext = NULL
+      , gtext = NULL
       , legend = "top"
+      , sig = NULL
+      , sigsize = 5
+      , error = NULL
       , color = TRUE
+      , opt = NULL
 )
 
 ### 2.4. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD)
 
 # data frame with percentual or relative germination in time by condition
-git2 <- ger_intime(Factor = "temp", SeedN = "seeds", evalName = "D", method = "percentage", data = dt)
-git2
+git <- ger_intime(Factor = "cond", SeedN = "seeds", evalName = "D", method = "percentage", data = dt)
+git
 
 # Figura 4. Efecto en la germinación en el tiempo según la condición luz/oscuridad
-fplot(data = git2
+
+fplot(data = git
       , type = "line"
       , x = "evaluation"
       , y = "mean"
-      , groups = "temp"
-      , limits = c(0,300)
-      , brakes = 50
-      , xlab = "Día"
-      , ylab = "Semillas germinadas"
+      , group = "cond"
+      , ylab = "Semillas germinadas" 
+      , xlab = "Días"
       , glab = "Condición ('1=Luz,' '2=Oscuridad')"
+      , ylimits = NULL
+      , xrotation = NULL
+      , xtext = NULL
+      , gtext = NULL
       , legend = "top"
+      , sig = NULL
+      , sigsize = 5
+      , error = NULL
       , color = TRUE
+      , opt = NULL
 )
-
 ### 2.5. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD) EN LA LONGITUD DE LAS RAÍCES
-pl1 <- ger_GRP(SeedN ="PL", evalName="D", data=dt)
-pl1
 
-gsm_pl <- ger_summary(SeedN = "PL", evalName = "D",data=dt)
-gsm_pl
-
-
-# Analisis de varianza
-
-av <- aov(formula = grp_pl ~ nacl*temp + rep, data = gsm_pl)
-av
-
-data <- mc_pl$table
-data
-
-## Figura 1. Efecto de la luz en el número de semillas germinadas
-
-fplot(data = data
-      , type = "line"
-      , x = "temp"
-      , y = "PL"
-      , groups = "nacl"
-      , limits = NULL
-      , brakes = 100
-      , ylab = "Número de semillas germinadas"
-      , xlab = "Condición ('1=luz,' '2=oscuridad')"
-      , glab = "Concentraciones de NaCl"
-      , legend = "top"
-      , color = T
+dt
+fplot(
+  data=dt, 
+  type = "bar",
+  x = "cond", 
+  y = "PL", 
+  group = "nacl",
+  ylab = "Promedio de la longitud de raíz (cm)", 
+  xlab = "Condición ('1=luz,' '2=oscuridad')", 
+  glab = "Concentraciones de NaCl", 
+  ylimits = NULL,
+  xrotation = NULL,
+  xtext = "cond",
+  gtext = NULL,
+  legend = "bottom",
+  sig = NULL,
+  sigsize = 4,
+  error = NULL,
+  color = TRUE,
+  opt = NULL
 )
-
+########################### OTROS CALCULOS ###############################
 ### OPCIONAL: Puedo obtener los promedios de cada día con:
 
 promedios<-summary.data.frame(dt)
@@ -250,8 +262,6 @@ promd=c(md0,md1,md2,md3,md4,md5,md6)
 
 meanComp<-data.frame(dia, promd)
 View(meanComp)
-
-########################### OTROS CALCULOS ###############################
 
 ### 1. Cumulative sum of germination matrix
 ###Description: This function makes a data table with the cumulative sum of values of germination.
