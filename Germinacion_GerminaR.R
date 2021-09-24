@@ -169,7 +169,7 @@ fplot(
 
 # data frame with percentual or relative germination in time by NaCl
 
-grt <- ger_intime(Factor = "nacl", SeedN = "seeds", evalName = "D", method = "percentage", data = data)
+grt <- ger_intime(Factor = "nacl", SeedN = "seeds", evalName = "D", method = "relative", data = data)
 head(grt, 10)
 
 # Figura 3. Germinación en los diferentes tratamientos según el día
@@ -178,7 +178,7 @@ fplot(data = grt
       , x = "evaluation"
       , y = "mean"
       , group = "nacl"
-      , ylab = "Semillas germinadas" 
+      , ylab = "Porcentaje Semillas germinadas" 
       , xlab = "Días"
       , glab = "Concentraciones de NaCl"
       , ylimits = NULL
@@ -196,7 +196,7 @@ fplot(data = grt
 ### 2.4. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD)
 
 # data frame with percentual or relative germination in time by condition
-git <- ger_intime(Factor = "cond", SeedN = "seeds", evalName = "D", method = "percentage", data = data)
+git <- ger_intime(Factor = "cond", SeedN = "seeds", evalName = "D", method = "relative", data = data)
 git
 
 # Figura 4. Efecto en la germinación en el tiempo según la condición luz/oscuridad
@@ -206,7 +206,7 @@ fplot(data = git
       , x = "evaluation"
       , y = "mean"
       , group = "cond"
-      , ylab = "Semillas germinadas" 
+      , ylab = "Porcentaje Semillas germinadas" 
       , xlab = "Días"
       , glab = "Condición ('1=Luz,' '2=Oscuridad')"
       , ylimits = NULL
@@ -233,7 +233,7 @@ fplot(
   glab = "Concentraciones de NaCl", 
   ylimits = NULL,
   xrotation = NULL,
-  xtext = "cond",
+  xtext = NULL,
   gtext = NULL,
   legend = "bottom",
   sig = NULL,
@@ -254,7 +254,7 @@ fplot(
   glab = "Concentraciones de NaCl", 
   ylimits = NULL,
   xrotation = NULL,
-  xtext = "cond",
+  xtext = NULL,
   gtext = NULL,
   legend = "bottom",
   sig = NULL,
@@ -276,7 +276,7 @@ fplot(
   glab = "Concentraciones de NaCl", 
   ylimits = NULL,
   xrotation = NULL,
-  xtext = "cond",
+  xtext = NULL,
   gtext = NULL,
   legend = "bottom",
   sig = NULL,
@@ -297,7 +297,7 @@ fplot(
   glab = "Concentraciones de NaCl", 
   ylimits = NULL,
   xrotation = NULL,
-  xtext = "cond",
+  xtext = NULL,
   gtext = NULL,
   legend = "bottom",
   sig = NULL,
@@ -306,6 +306,24 @@ fplot(
   color = TRUE,
   opt = NULL
 )
+
+
+
+#####PARA REVISAR PARA SACAR EL PROMEDIO DE PL Y BM Y PODER GRAFICAR
+
+
+mgt_PL <- ger_MGT(evalName = "D", data = data)
+mgt_PL
+
+av_PL <- aov(mgt_PL ~ nacl*cond + PL, data = mgt_PL)
+av_PL
+
+mc_mgt_PL <- ger_testcomp(aov = av_PL, comp = c("cond", "PL"), type = "snk", sig = NULL)
+mc_mgt_PL
+
+datamgt_PL <- mc_mgt_PL$table
+datamgt_PL
+
 
 ########################### OTROS CALCULOS ###############################
 ### OPCIONAL: Puedo obtener los promedios de cada día con:
