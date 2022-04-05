@@ -108,7 +108,7 @@ mc <- ger_testcomp(aov = aov, comp = c("nacl", "cond"))
 datagrp <- mc$table
 datagrp
 
-## Figura 1. Efecto de la luz en el número de semillas germinadas
+## 1. Efecto de la luz en el número de semillas germinadas
 
 fplot(
   data=datagrp, 
@@ -230,7 +230,7 @@ fplot(data = git
       , opt = NULL
 )
 ### 2.5. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD) EN LA LONGITUD DE LAS RAÍCESY BIOMASA
-### Figura 6 Comparación de la longitud de la raíz en cada tratamiento.
+### Figura 5. Comparación de la longitud de la raíz en cada tratamiento.
 fplot(
   data=data, 
   type = "bar",
@@ -251,7 +251,7 @@ fplot(
   color = TRUE,
   opt = NULL
 )
-### Figura 7 Comparación de la BIOMASA en cada tratamiento.
+### Figura 6. Comparación de la BIOMASA en cada tratamiento.
 fplot(
   data=data, 
   type = "bar",
