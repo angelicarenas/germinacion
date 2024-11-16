@@ -55,7 +55,7 @@ library("cowplot")
 dt<-read.table(file.choose(), sep=",", header=TRUE)
 head(dt)
 
-# load data ("Cargar" los datos para el an?lisis de germinaci?n)
+# load data ("Cargar" los datos para el análisis de germinación)
 ##dplyr::mutate
 
 data <- dt %>% mutate(across(c(nacl, cond, rep, PL, BM), as.factor))
@@ -82,14 +82,14 @@ View(smr)
 
 grp <- ger_GRP(SeedN ="seeds", evalName="D", data=data)
 grp
-
+help("ger_summary")
 gsm <- ger_summary(SeedN ="seeds", evalName="D", data=data)
 gsm
 
 # Tabla de los Datos de los experimentos de las semillas
 
 knitr::kable(x = data,booktabs = TRUE, caption = "Experimento germinación semillas Chía BD24-02 USCO")
-
+View(smr)
 # Analisis de varianza
 
 av <- aov(formula = grp ~ nacl*cond + rep, data = gsm)
@@ -205,7 +205,7 @@ fplot(data = grt
       , opt = NULL
 )
 
-### 2.4. EFECTO DE LA CONDICI?N (LUZ Y OSCURIDAD)
+### 2.4. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD)
 
 # data frame with percentual or relative germination in time by condition
 git <- ger_intime(Factor = "cond", SeedN = "seeds", evalName = "D", method = "relative", data = data)
@@ -254,7 +254,7 @@ fplot(
   color = TRUE,
   opt = NULL
 )
-### 2.6. EFECTO DE LA CONDICI?N (LUZ Y OSCURIDAD) EN LA BIOMASA
+### 2.6. EFECTO DE LA CONDICIÓN (LUZ Y OSCURIDAD) EN LA BIOMASA
 
 fplot(
   data=data, 
